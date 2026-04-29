@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+/* ================================================
+   像素小屋 · 全局样式
+   参考风格：星露谷物语
+   ================================================ */
+
+/* 像素风基础字体 */
+@font-face {
+  font-family: "PixelFont";
+  src: url("https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivNm4I81.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* CSS 变量 - 星露谷配色 */
+:root {
+  /* 主色调 - 温暖泥土 */
+  --color-soil: #5c3d1e;
+  --color-soil-light: #7a5230;
+  --color-soil-dark: #3e2810;
+
+  /* 草地绿 */
+  --color-grass: #5aa02c;
+  --color-grass-light: #7bc148;
+  --color-grass-dark: #3d7a1a;
+
+  /* 天空蓝 */
+  --color-sky: #87ceeb;
+  --color-sky-night: #1a1a4e;
+
+  /* 木头/建筑 */
+  --color-wood: #c8864a;
+  --color-wood-dark: #8b5a2b;
+  --color-wood-light: #e8a870;
+
+  /* 石头 */
+  --color-stone: #9e9e9e;
+  --color-stone-light: #c4c4c4;
+  --color-stone-dark: #616161;
+
+  /* 金色/高亮 */
+  --color-gold: #f5c518;
+  --color-gold-light: #ffd700;
+
+  /* 窗户光 */
+  --color-window-glow: #ffe066;
+  --color-window-dark: #2c2c3a;
+
+  /* UI 面板 */
+  --color-panel-bg: #f5e6c8;
+  --color-panel-border: #8b6340;
+  --color-panel-dark: #3d2e1a;
+
+  /* 像素边框 */
+  --pixel-border: 2px;
+  --pixel-radius: 0px; /* 像素风不用圆角 */
+
+  /* 动画速度 */
+  --anim-slow: 0.8s;
+  --anim-normal: 0.3s;
+  --anim-fast: 0.15s;
+}
+
+/* 全局重置 - 像素化渲染 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: "PixelFont", monospace;
+  font-size: 12px;
+  color: var(--color-panel-dark);
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+/* 像素风滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-panel-bg);
+  border-left: 2px solid var(--color-panel-border);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-wood);
+  border: 2px solid var(--color-wood-dark);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-wood-dark);
+}
+
+/* 像素风按钮基础样式 */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  background: var(--color-wood);
+  color: #fff;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "PixelFont", monospace;
+  font-size: 11px;
+  /* 像素立体边框 */
+  box-shadow:
+    inset -2px -2px 0 var(--color-wood-dark),
+    inset 2px 2px 0 var(--color-wood-light);
+  transition: box-shadow var(--anim-fast);
+}
+.pixel-btn:hover {
+  box-shadow:
+    inset -3px -3px 0 var(--color-wood-dark),
+    inset 3px 3px 0 var(--color-wood-light);
+}
+.pixel-btn:active {
+  box-shadow:
+    inset 2px 2px 0 var(--color-wood-dark),
+    inset -2px -2px 0 var(--color-wood-light);
+  transform: translate(1px, 1px);
+}
+.pixel-btn--green {
+  background: var(--color-grass);
+  box-shadow:
+    inset -2px -2px 0 var(--color-grass-dark),
+    inset 2px 2px 0 var(--color-grass-light);
+}
+.pixel-btn--green:hover {
+  box-shadow:
+    inset -3px -3px 0 var(--color-grass-dark),
+    inset 3px 3px 0 var(--color-grass-light);
+}
+.pixel-btn--danger {
+  background: #c0392b;
+  box-shadow:
+    inset -2px -2px 0 #922b21,
+    inset 2px 2px 0 #e74c3c;
+}
+
+/* 像素风面板 */
+.pixel-panel {
+  background: var(--color-panel-bg);
+  border: 3px solid var(--color-panel-border);
+  box-shadow:
+    4px 4px 0 rgba(0, 0, 0, 0.4),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+.pixel-panel::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+/* 像素风输入框 */
+.pixel-input {
+  background: #fff8e8;
+  border: 2px solid var(--color-panel-border);
+  padding: 6px 10px;
+  font-family: "PixelFont", monospace;
+  font-size: 11px;
+  color: var(--color-panel-dark);
+  outline: none;
+  width: 100%;
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+.pixel-input:focus {
+  border-color: var(--color-grass);
+  box-shadow:
+    inset 2px 2px 0 rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(90, 160, 44, 0.3);
+}
+
+/* 像素风标签 */
+.pixel-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--color-grass);
+  color: #fff;
+  font-size: 10px;
+  font-family: "PixelFont", monospace;
+  box-shadow: 2px 2px 0 var(--color-grass-dark);
+}
+
+/* 像素风分隔线 */
+.pixel-divider {
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-panel-border) 0px,
+    var(--color-panel-border) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  margin: 8px 0;
+}
+
+/* 闪光动画 */
+@keyframes pixel-flash {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.8) saturate(1.5);
+  }
+}
+
+/* 浮动动画（像素跳动） */
+@keyframes pixel-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* 管家气泡动画 */
+@keyframes bubble-pop {
+  0% {
+    transform: scale(0) translateY(10px);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1) translateY(-2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 升级庆祝动画 */
+@keyframes celebrate-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-3deg);
+  }
+  40% {
+    transform: rotate(3deg);
+  }
+  60% {
+    transform: rotate(-2deg);
+  }
+  80% {
+    transform: rotate(2deg);
+  }
+}
+
+/* 工具类 */
+.pixel-float {
+  animation: pixel-float 2s ease-in-out infinite;
+}
+.pixel-flash {
+  animation: pixel-flash 0.3s ease-in-out 3;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+.drag-region {
+  -webkit-app-region: drag;
+}
