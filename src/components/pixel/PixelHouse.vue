@@ -132,8 +132,20 @@ const CAT_IDLE_FPS    = 6     // 待机动画帧率
 
 // ── 尺寸 ──────────────────────────────────────────────
 const stripW = ref(window.innerWidth)
-const stripX = ref(0)
-const stripY = ref(window.innerHeight - STRIP_H - 4)
+// 从 localStorage 恢复位置，默认贴底
+const STRIP_POS_KEY = 'ph_strip_pos'
+function loadStripPos() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STRIP_POS_KEY) || '{}')
+    return {
+      x: typeof saved.x === 'number' ? saved.x : 0,
+      y: typeof saved.y === 'number' ? saved.y : window.innerHeight - STRIP_H - 4,
+    }
+  } catch { return { x: 0, y: window.innerHeight - STRIP_H - 4 } }
+}
+const _initPos = loadStripPos()
+const stripX = ref(_initPos.x)
+const stripY = ref(_initPos.y)
 
 // ── 区域 ──────────────────────────────────────────────
 const ZONES = [
@@ -302,12 +314,18 @@ function startDragStrip(e: MouseEvent) {
 }
 function onDragStrip(e: MouseEvent) {
   if (!draggingStrip) return
-  stripX.value = dragStartSX + (e.clientX - dragStartX)
-  stripY.value = dragStartSY + (e.clientY - dragStartY)
+  const scaledH = Math.round(STRIP_H * scale.value)
+  const scaledW = Math.round(stripW.value * scale.value)
+  // 边界：不允许超出屏幕四边
+  stripX.value = Math.max(0, Math.min(window.innerWidth  - scaledW, dragStartSX + (e.clientX - dragStartX)))
+  stripY.value = Math.max(0, Math.min(window.innerHeight - scaledH, dragStartSY + (e.clientY - dragStartY)))
 }
 function stopDragStrip() {
   draggingStrip = false
-  window.removeEventListener('mousemove', onDragStrip); window.removeEventListener('mouseup', stopDragStrip)
+  window.removeEventListener('mousemove', onDragStrip)
+  window.removeEventListener('mouseup',   stopDragStrip)
+  // 落定后保存位置，下次启动恢复
+  localStorage.setItem(STRIP_POS_KEY, JSON.stringify({ x: stripX.value, y: stripY.value }))
 }
 
 // ── 调节宽度 ──────────────────────────────────────────
@@ -468,13 +486,16 @@ watch(() => appStore.skinVersion, loadCustomSkins)
 // ── 生命周期 ──────────────────────────────────────────
 onMounted(() => {
   loadCustomSkins()
-  stripW.value = window.innerWidth; stripX.value = 0
-  stripY.value = window.innerHeight - STRIP_H - 4
+  stripW.value = window.innerWidth
+  // 窗口 resize 时只修正越界，不强制复位
+  stripX.value = Math.max(0, Math.min(window.innerWidth  - stripW.value, stripX.value))
+  stripY.value = Math.max(0, Math.min(window.innerHeight - STRIP_H,       stripY.value))
   nextTick(() => { animId = requestAnimationFrame(draw) })
   document.addEventListener('keydown', onKeyDown)
   window.addEventListener('resize', () => {
-    stripW.value = window.innerWidth; stripX.value = 0
-    stripY.value = window.innerHeight - STRIP_H - 4
+    stripW.value = window.innerWidth
+    stripX.value = Math.max(0, Math.min(window.innerWidth  - stripW.value, stripX.value))
+    stripY.value = Math.max(0, Math.min(window.innerHeight - STRIP_H,       stripY.value))
   })
 })
 onUnmounted(() => {
